@@ -1,0 +1,12 @@
+[package]
+name = "openreil-sys"
+version = "0.1.0"
+authors = ["Jonas Großmann <jonas.github@naevius.de>"]
+build = "build.rs"
+
+[build-dependencies]
+bindgen = "*"
+gcc = "*"
+
+[dependencies]
+libc = "*"
