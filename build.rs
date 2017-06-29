@@ -1,11 +1,14 @@
 extern crate bindgen;
 extern crate gcc;
+extern crate regex;
 
 use std::env;
 use std::fs;
 use std::path::PathBuf;
 use std::io::{ Write, BufWriter };
 use std::process::Command;
+
+use regex::Regex;
 
 static OR_ROOT_DIR: &str = "./openreil/";
 
@@ -25,11 +28,13 @@ fn main() {
 
     let mut modified_bindings = String::with_capacity(bindings.len());
 
+    let rgx = Regex::new(r"pub const (?:__?[A-Z]+_?[A-Z]+|.*_MIN\b|.*_MAX\b)").expect("could not compile regex");
+
     for line in bindings.lines() {
         if line.starts_with("pub mod root") {
             modified_bindings.push_str(line);
             modified_bindings.push_str("\n    use self::super::libc;\n");
-        } else {
+        } else if ! rgx.is_match(line) {
             modified_bindings.push_str(line);
             modified_bindings.push('\n');
         }
